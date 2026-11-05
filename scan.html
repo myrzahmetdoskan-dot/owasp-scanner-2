@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h4>Сканерлеу #{{ scan.id }} <small class="text-muted fs-6">{{ scan.url }}</small></h4>
+<p id="progress" class="text-muted">{{ scan.progress }}</p>
+{% if scan.status == 'running' %}
+<div class="progress mb-3"><div class="progress-bar progress-bar-striped progress-bar-animated w-100"></div></div>
+<script>
+const t=setInterval(async()=>{const r=await fetch('/api/scan/{{ scan.id }}');const d=await r.json();
+document.getElementById('progress').textContent=d.progress;
+if(d.status!=='running'){clearInterval(t);location.reload();}},1500);
+</script>
+{% elif scan.status == 'error' %}
+<div class="alert alert-danger">{{ scan.progress }}</div>
+{% else %}
+<div class="row mb-4">
+  <div class="col-md-4"><div class="card"><div class="card-body"><canvas id="ch"></canvas></div></div></div>
+  <div class="col-md-8">
+    <div class="d-flex gap-2 mb-3">
+      <span class="badge sev-High fs-6">High: {{ counts.High }}</span>
+      <span class="badge sev-Medium fs-6">Medium: {{ counts.Medium }}</span>
+      <span class="badge sev-Low fs-6">Low: {{ counts.Low }}</span>
+    </div>
+    <a class="btn btn-outline-dark" href="/scan/{{ scan.id }}/report">⬇ HTML есепті жүктеу</a>
+  </div>
+</div>
+{% for f in findings %}
+<div class="card mb-2"><div class="card-body">
+  <span class="badge sev-{{ f.severity }}">{{ f.severity }}</span>
+  <strong class="ms-2">{{ f.title }}</strong>
+  <div class="small text-muted">{{ f.owasp }} · {{ f.url }}</div>
+  <div class="small mt-1"><b>Дәлел:</b> {{ f.evidence }}</div>
+  <div class="small"><b>Түзету:</b> {{ f.fix }}</div>
+</div></div>
+{% else %}<div class="alert alert-success">Осалдық табылмады.</div>{% endfor %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>new Chart(document.getElementById('ch'),{type:'doughnut',
+data:{labels:['High','Medium','Low'],datasets:[{data:[{{ counts.High }},{{ counts.Medium }},{{ counts.Low }}],
+backgroundColor:['#dc3545','#fd7e14','#0d6efd']}]}});</script>
+{% endif %}
+{% endblock %}

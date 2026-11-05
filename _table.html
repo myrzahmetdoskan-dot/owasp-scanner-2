@@ -1,0 +1,5 @@
+<table class="table table-sm bg-white">
+<thead><tr><th>#</th><th>URL</th><th>Күйі</th><th>Табылды</th><th>Уақыты</th></tr></thead>
+<tbody>{% for s in scans %}
+<tr><td><a href="/scan/{{ s.id }}">{{ s.id }}</a></td><td>{{ s.url }}</td><td>{{ s.status }}</td><td>{{ s.total }}</td><td>{{ s.created }}</td></tr>
+{% else %}<tr><td colspan="5" class="text-muted">Әзірге бос</td></tr>{% endfor %}</tbody></table>

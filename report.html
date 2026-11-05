@@ -1,0 +1,13 @@
+<!doctype html><html lang="kk"><head><meta charset="utf-8"><title>Есеп #{{ scan.id }}</title>
+<style>body{font-family:sans-serif;max-width:900px;margin:2em auto;padding:0 1em}
+.f{border:1px solid #ccc;border-radius:6px;padding:10px;margin:8px 0}
+.High{border-left:6px solid #dc3545}.Medium{border-left:6px solid #fd7e14}.Low{border-left:6px solid #0d6efd}
+small{color:#555}</style></head><body>
+<h1>Қауіпсіздік есебі</h1>
+<p><b>Нысан:</b> {{ scan.url }}<br><b>Басталды:</b> {{ scan.created }}<br><b>Аяқталды:</b> {{ scan.finished }}</p>
+<p><b>Қорытынды:</b> High {{ counts.High }}, Medium {{ counts.Medium }}, Low {{ counts.Low }}</p>
+{% for f in findings %}<div class="f {{ f.severity }}">
+<b>[{{ f.severity }}] {{ f.title }}</b><br><small>{{ f.owasp }} · {{ f.url }}</small>
+<p><b>Дәлел:</b> {{ f.evidence }}<br><b>Түзету:</b> {{ f.fix }}</p></div>
+{% else %}<p>Осалдық табылмады.</p>{% endfor %}
+</body></html>
